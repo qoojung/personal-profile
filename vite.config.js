@@ -3,7 +3,12 @@ import react from "@vitejs/plugin-react";
 import viteImagemin from "vite-plugin-imagemin";
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  // Set base path for GitHub Pages deployment
+  // In production (GitHub Pages), use repository name as base path
+  // In development, use root path
+  base: mode === "production" ? "/personal-portfolio/" : "/",
+
   plugins: [
     react(),
     // Image optimization plugin for production builds
@@ -45,4 +50,4 @@ export default defineConfig({
   optimizeDeps: {
     include: ["react", "react-dom"],
   },
-});
+}));
