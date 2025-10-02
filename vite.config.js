@@ -5,7 +5,7 @@ import viteImagemin from "vite-plugin-imagemin";
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
   // Set base path for GitHub Pages deployment
-  // In production (GitHub Pages), use repository name as base path
+  // For GitHub Pages project repository: https://qoojung.github.io/personal-pro
   // In development, use root path
   base: "",
 
