@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => ({
   // Set base path for GitHub Pages deployment
   // In production (GitHub Pages), use repository name as base path
   // In development, use root path
-  base: mode === "production" ? "/personal-portfolio/" : "/",
+  base: "",
 
   plugins: [
     react(),
