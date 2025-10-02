@@ -1,5 +1,7 @@
 # Personal Portfolio
 
+[![Deploy to GitHub Pages](https://github.com/qoojung/personal-profile/actions/workflows/deploy.yml/badge.svg)](https://github.com/qoojung/personal-profile/actions/workflows/deploy.yml)
+
 A modern, responsive personal portfolio website built with React and Vite.
 
 ## Live Site

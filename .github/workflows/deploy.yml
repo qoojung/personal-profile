@@ -1,40 +1,52 @@
-# Deploy to GitHub Pages
+# GitHub Actions Workflow for Deploying to GitHub Pages
+# This workflow automatically builds and deploys the personal portfolio site
+# to GitHub Pages whenever changes are pushed to the main branch.
 name: Deploy to GitHub Pages
 
-# Trigger workflow on push to main branch or manual dispatch
+# Workflow Triggers:
+# - push: Automatically runs when code is pushed to the main branch
+# - workflow_dispatch: Allows manual triggering from the Actions tab
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
-# Set permissions for GitHub Pages deployment
+# Permissions required for GitHub Pages deployment:
+# - contents: read - Allows reading repository contents
+# - pages: write - Allows writing to GitHub Pages
+# - id-token: write - Required for OIDC authentication with GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Prevent concurrent deployments
+# Concurrency control to prevent multiple deployments running simultaneously
+# This ensures only one deployment runs at a time to avoid conflicts
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
-
 jobs:
-  # Build job - installs dependencies and builds the project
+  # BUILD JOB
+  # This job installs dependencies, builds the project, and prepares artifacts for deployment
   build:
     runs-on: ubuntu-latest
     steps:
-      # Checkout the repository code
+      # Step 1: Checkout repository code
+      # Uses actions/checkout@v4 to clone the repository into the runner
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Setup Node.js environment
+      # Step 2: Setup Node.js environment
+      # Installs Node.js 20.x (LTS) which is required for building the Vite project
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: "20.x"
 
-      # Cache npm dependencies for faster builds
+      # Step 3: Cache npm dependencies
+      # Caches node_modules to speed up subsequent builds
+      # Cache key is based on package-lock.json hash to ensure cache invalidation on dependency changes
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
@@ -43,32 +55,47 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      # Install dependencies using npm ci for clean install
+      # Step 4: Install dependencies
+      # Uses 'npm ci' instead of 'npm install' for faster, more reliable installs in CI environments
+      # npm ci performs a clean install based on package-lock.json
       - name: Install dependencies
         run: npm ci
         working-directory: ./
 
-      # Build the project
+      # Step 5: Build the project
+      # Runs 'npm run build' which executes Vite build process
+      # Generates optimized production files in the dist/ directory
+      # Includes minification, code splitting, and asset optimization
       - name: Build
         run: npm run build
         working-directory: ./
 
-      # Upload build artifacts for deployment
+      # Step 6: Upload build artifacts
+      # Uploads the dist/ directory as a GitHub Pages artifact
+      # This artifact will be used by the deploy job
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist/
 
-
-  # Deploy job - deploys the built artifacts to GitHub Pages
+  # DEPLOY JOB
+  # This job deploys the built artifacts to GitHub Pages
+  # It only runs after the build job completes successfully
   deploy:
-    needs: build
+    needs: build # Wait for build job to complete
     runs-on: ubuntu-latest
+
+    # Environment configuration for GitHub Pages
+    # The URL will be available after deployment completes
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
-      # Deploy to GitHub Pages
+      # Step 1: Deploy to GitHub Pages
+      # Uses actions/deploy-pages@v4 to deploy the uploaded artifact
+      # This action handles the deployment to GitHub Pages automatically
+      # The deployment URL will be available in the workflow output
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
