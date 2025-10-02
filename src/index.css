@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@theme {
+  --color-tech-light: #ffffff;
+  --color-tech-light-bg: #f8fafc;
+  --color-tech-accent-blue: #3b82f6;
+  --color-tech-accent-teal: #14b8a6;
+  --color-tech-accent-cyan: #06b6d4;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(to bottom right, #dbeafe, #ffffff, #ccfbf1);
+  color: theme(colors.gray.900);
+  min-height: 100vh;
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradient-shift 15s ease infinite;
+}
